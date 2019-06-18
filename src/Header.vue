@@ -13,6 +13,7 @@
                     <li class="nav-item">
                         <router-link to="/stocks" tag="li" active-class="active"><a class="nav-link" href="#">Stock</a></router-link>
                     </li>
+                    <li class="nav-item"><a class="nav-link" href="#">Funds Availabile:{{Funds}}</a></li>
                 </ul>
             </div>
             <span class="navbar-text">
@@ -21,3 +22,12 @@
         </nav>
     </div>
 </template>
+<script>
+export default {
+  computed: {
+    Funds () {
+      return this.$store.getters.Funds
+    }
+  }
+}
+</script>
