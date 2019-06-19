@@ -13,6 +13,9 @@ const actions = {
   },
   buyStock: ({commit}, order) => {
     commit('Buy_STOCK', order)
+  },
+  sellstock: ({commit}, order) => {
+    commit('Sell_Stock', order)
   }
 }
 

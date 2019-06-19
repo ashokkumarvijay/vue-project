@@ -17,6 +17,16 @@ const mutations = {
       })
       state.funds = state.funds - (price * stockquantity)
     }
+  },
+  Sell_Stock: function (state, {stockid, stockname, price, stockquantity}) {
+    const record = state.stocks.find(element => element.id === stockid)
+    if (record) {
+      state.funds = state.funds + (price * stockquantity)
+      record.quantity = record.quantity - stockquantity
+      if (record.quantity === 0) {
+        state.stocks.pop(record)
+      }
+    }
   }
 }
 const getters = {

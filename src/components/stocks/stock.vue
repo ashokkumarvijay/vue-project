@@ -1,12 +1,12 @@
 <template>
-    <div class= "card card-success col-sm-6 col-md-4 ">
+    <div class="col-sm-6 col-md-4 card card-success">
             <div class="card-header text-white" style="height: 40px;background-color:#42b983;width:365px;">Name:{{stocks.name}},price:{{stocks.Price}},quantity:{{quantity}}</div>
             <div class="card-body">
                 <div class="float-left col-md-9" >
-                    <input type="text" placeholder="Enter Quantity" class="form-control" v-model.lazy="quantity">
+                    <input type="number" placeholder="Enter Quantity" class="form-control" v-model.number="quantity">
                 </div>
                 <div class="float-right">
-                    <button class="btn btn-success" @click="buy">Buy</button>
+                    <button :disabled="insufficientfunds" class="btn btn-success" @click="buy">Buy</button>
                 </div>
             </div>
         </div>
@@ -16,7 +16,16 @@ export default {
   props: ['stocks'],
   data: function () {
     return {
-      quantity: 0
+      quantity: 0,
+      funds: 1000
+    }
+  },
+  computed: {
+    insufficientfunds () {
+      return this.quantity * this.stocks.Price > this.Funds
+    },
+    Funds () {
+      return this.$store.getters.Funds
     }
   },
   methods: {
@@ -24,10 +33,10 @@ export default {
       const order = {
         stockid: this.stocks.id,
         stockname: this.stocks.name,
-        price: this.stocks.price,
+        price: this.stocks.Price,
         stockquantity: this.quantity
       }
-      console.log(order)
+      this.$store.dispatch('buyStock', order)
       this.quantity = 0
     }
   }
