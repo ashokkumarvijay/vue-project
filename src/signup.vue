@@ -6,36 +6,44 @@
             <hr>
 
             <label for="email" :class="{invalid: $v.email.$error}"><b>Email</b></label>
-            <input type="text" placeholder="Enter Email"  @blur="$v.email.$touch()" v-model="email" name="email" required>
+            <input type="text" placeholder="Enter Email"  @blur="$v.email.$touch()" v-model="email"  name="email" :class="{invalid: $v.email.$error}" required>
             <label for="psw" :class="{invalid: $v.password.$error}"><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" v-model="password" @blur="$v.password.$touch()" name="psw" required>
+            <input type="password" placeholder="Enter Password" v-model="password" @blur="$v.password.$touch()" name="psw" :class="{invalid: $v.password.$error}" required>
 
             <label for="psw-repeat" :class="{invalid: $v.confirmpassword.$error}"><b>Repeat Password</b></label>
-            <input type="password" placeholder="Repeat Password"   @blur="$v.confirmpassword.$touch()" v-model="confirmpassword" name="psw-repeat" required>
+            <input type="password" placeholder="Repeat Password"   @blur="$v.confirmpassword.$touch()" v-model="confirmpassword" name="psw-repeat"  :class="{invalid: $v.confirmpassword.$error}"   required>
             <hr>
-            <button    class="registerbtn" >Register</button>
+            <button   :disabled="$v.$invalid" @click="submit" class="registerbtn" >Register</button>
         </div>
 
         <div class="container signin">
             <p>Already have an account? <router-link to="/signin">Sign_In</router-link>.</p>
         </div>
-
     </div>
 </template>
 <script>
+import axios from 'axios'
 import {required, email, minLength, sameAs} from 'vuelidate/lib/validators'
 export default {
   data: function () {
     return {
       email: '',
       password: '',
-      confirmpassword: ''
+      confirmpassword: '',
+      value: []
     }
   },
   validations: {
     email: {
       required,
-      email
+      email,
+      unique: val => {
+        if (val === ' ') return true
+        return axios.get('https://ashok-38e5f.firebaseio.com/data.json?orderBy="mail"&equalTo="' + val + '"')
+          .then(res => {
+            return Object.keys(res.data).length === 0
+          })
+      }
     },
     password: {
       required,
@@ -43,6 +51,18 @@ export default {
     },
     confirmpassword: {
       sameAs: sameAs('password')
+    }
+  },
+  methods: {
+    submit: function () {
+      axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDPFy5TNZYkiIMGJQBpabdAVUS5-Gbn0-s', {
+        email: this.email,
+        password: this.password,
+        returnSecureToken: true
+      })
+      this.email = ''
+      this.password = ''
+      this.confirmpassword = ''
     }
   }
 }
@@ -77,6 +97,9 @@ export default {
     }
 .invalid {
     color:red;
+}
+ .invalid input{
+    background-color: red;
 }
     /* Set a style for the submit/register button */
     .registerbtn {
