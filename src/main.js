@@ -3,12 +3,10 @@
 import Vue from 'vue'
 import App from './App'
 import VueRouter from 'vue-router'
-import {routes} from './routes.js'
-import Vuex from 'vuex'
-import store from './store/store.js'
+import {routes} from './routes'
+import Vuelidate from 'vuelidate'
 Vue.use(VueRouter)
-Vue.use(Vuex)
-
+Vue.use(Vuelidate)
 export const router = new VueRouter({
   routes
 })
@@ -18,6 +16,5 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
-  store,
   render: h => h(App)
 })

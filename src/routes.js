@@ -1,9 +1,8 @@
-import Home from './Home.vue'
-import Portfolio from './components/portfolio/portfolio.vue'
-import Stocks from './components/stocks/stocks'
-
+import Welocme from './welcome'
+import Signup from './signup.vue'
+import signin from './singin'
 export const routes = [
-  {path: '/', component: Home},
-  {path: '/portfolio', component: Portfolio},
-  {path: '/stocks', component: Stocks}
+  {path: '', component: Welocme},
+  {path: '/signup', component: Signup},
+  {path: '/signin', component: signin}
 ]
