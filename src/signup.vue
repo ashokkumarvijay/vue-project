@@ -55,14 +55,7 @@ export default {
   },
   methods: {
     submit: function () {
-      axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDPFy5TNZYkiIMGJQBpabdAVUS5-Gbn0-s', {
-        email: this.email,
-        password: this.password,
-        returnSecureToken: true
-      })
-      this.email = ''
-      this.password = ''
-      this.confirmpassword = ''
+      this.$store.dispatch('signup', {email: this.email, password: this.password})
     }
   }
 }

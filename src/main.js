@@ -5,8 +5,11 @@ import App from './App'
 import VueRouter from 'vue-router'
 import {routes} from './routes'
 import Vuelidate from 'vuelidate'
+import store from './store.js'
+
 Vue.use(VueRouter)
 Vue.use(Vuelidate)
+
 export const router = new VueRouter({
   routes
 })
@@ -16,5 +19,6 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store,
   render: h => h(App)
 })

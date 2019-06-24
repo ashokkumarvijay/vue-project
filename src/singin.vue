@@ -1,13 +1,13 @@
 <template>
     <div>
         <div class="container title m-b-md">
-                <label for="uname"><b>Username</b></label><br>
-                <input type="text" placeholder="Enter Username" name="uname" required><br>
+                <label for="email"><b>Email</b></label><br>
+                <input type="text" placeholder="Enter Username" name="email" v-model="email" required><br>
 
                 <label for="psw"><b>Password</b></label><br>
-                <input type="password" placeholder="Enter Password" name="psw" required>
+                <input type="password" placeholder="Enter Password" name="psw" v-model="password" required>
 
-                <button type="submit">Login</button><br>
+                <button  @click="login" type="submit">Login</button><br>
                 <label>
                     <input type="checkbox" checked="checked" name="remember"> Remember me
                 </label>
@@ -19,6 +19,21 @@
 
     </div>
 </template>
+<script>
+export default {
+  data: function () {
+    return {
+      email: '',
+      password: ''
+    }
+  },
+  methods: {
+    login: function () {
+      this.$store.dispatch('login', {email: this.email, password: this.password})
+    }
+  }
+}
+</script>
 <style scoped>
     /* Full-width inputs */
     input[type=text], input[type=password] {

@@ -4,7 +4,8 @@
                 <div class="flex-center position-ref full-height">
                     <div class="top-right links">
                       <router-link to="/signup">Signup</router-link>
-                        <router-link to="/signup">SignIn</router-link>
+                        <router-link to="/signin">SignIn</router-link>
+                        <router-link to="/dashboard">Dashboard</router-link>
                     </div>
                 <div class="title m-b-md">
                   Welocme Vue
