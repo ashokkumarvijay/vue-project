@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     login: function () {
-      this.$store.dispatch('login', {email: this.email, password: this.password})
+      this.$store.dispatch('login', {email: this.email, password: this.password, router: this.$route})
     }
   }
 }
@@ -87,8 +87,8 @@ export default {
     }
     .container1 {
         padding: 16px;
-        width: 43%;
-        margin-left: 370px;
+        width: 35%;
+        margin-left: 520px;
     }
 
     /* The "Forgot password" text */

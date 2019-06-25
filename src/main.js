@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import VueRouter from 'vue-router'
-import {routes} from './routes'
+import routes from './routes'
 import Vuelidate from 'vuelidate'
 import store from './store.js'
 

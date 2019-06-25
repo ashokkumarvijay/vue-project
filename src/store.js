@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import router from './routes.js'
 Vue.use(Vuex)
 
-export default  new Vuex.Store({
+export default new Vuex.Store({
   state: {
     idToken: null,
     userId: null,
@@ -19,6 +20,13 @@ export default  new Vuex.Store({
     }
   },
   actions: {
+    setLogoutTimer ({commit, expiretime}) {
+      setTimeout(() => {
+        commit('logout')
+
+      }, expiretime * 1000)
+
+    },
     signup ({commit, dispatch}, authData) {
       axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDPFy5TNZYkiIMGJQBpabdAVUS5-Gbn0-s', {
         email: authData.email,
@@ -34,8 +42,8 @@ export default  new Vuex.Store({
           dispatch('storeUser', authData)
         })
     },
-    login ({commit}, authData) {
-      axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDPFy5TNZYkiIMGJQBpabdAVUS5-Gbn0-s',{
+    login ({commit, dispatch,state}, authData) {
+      axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDPFy5TNZYkiIMGJQBpabdAVUS5-Gbn0-s', {
         email: authData.email,
         password: authData.password,
         returnSecureToken: true
@@ -46,14 +54,23 @@ export default  new Vuex.Store({
             token: res.data.idToken,
             userId: res.data.localId
           })
+          if (state.idToken !== null) {
+            console.log(authData.router.path)
+          }
         })
     },
-    storeUser ({commit}, userData) {
-      axios.post('https://ashok-38e5f.firebaseio.com/data.json', userData)
+    storeUser ({commit, state}, userData) {
+      if (!state.idToken) {
+        return
+      }
+      axios.post('https://ashok-38e5f.firebaseio.com/data.json' + '?auth=' + state.idToken, userData)
         .then(res => { console.log(res) })
     },
-    fetchUser ({commit}) {
-      axios.get('https://ashok-38e5f.firebaseio.com/data.json')
+    fetchUser ({commit, state}) {
+      if (!state.idToken) {
+        return
+      }
+      axios.get('https://ashok-38e5f.firebaseio.com/data.json' + '?auth=' + state.idToken)
         .then(res => {
           const data = res.data
           const users = []
@@ -67,7 +84,7 @@ export default  new Vuex.Store({
     }
   },
   getters: {
-    getUser (state) {
+    user (state) {
       return state.user
     }
   }

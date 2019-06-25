@@ -39,7 +39,7 @@ export default {
       email,
       unique: val => {
         if (val === ' ') return true
-        return axios.get('https://ashok-38e5f.firebaseio.com/data.json?orderBy="mail"&equalTo="' + val + '"')
+        return axios.get('https://ashok-38e5f.firebaseio.com/data.json?orderBy="email"&equalTo="' + val + '"')
           .then(res => {
             return Object.keys(res.data).length === 0
           })
