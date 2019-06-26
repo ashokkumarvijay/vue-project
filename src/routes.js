@@ -7,7 +7,10 @@ import store from './store.js'
 export default [
   {path: '', component: Welocme},
   {path: '/signup', component: Signup},
-  {path: '/signin', component: signin},
+  {
+    path: '/signin',
+    component: signin
+  },
   {
     path: '/dashboard',
     component: dashboard,

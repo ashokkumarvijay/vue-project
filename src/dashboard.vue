@@ -1,12 +1,10 @@
 <template>
     <div>
-    <div class="content">
-        <div class="flex-center position-ref full-height">
+
             <div class="top-right links">
-                <h6 @click="logout" cursor="pointer">Logout</h6>
+                <h6  class= "logout" @click="logout" >Logout</h6>
             </div>
-        </div>
-    </div>
+
     </div>
 </template>
 <script>
@@ -17,9 +15,10 @@ export default {
     }
   },
   methods: {
-    // logout: function () {
-    //  this.$store.dispatch('logout')
-    //  }
+    logout: function () {
+      this.$router.push('/signin')
+     this.$store.dispatch('logout')
+     }
   },
   created () {
     this.$store.dispatch('fetchUser')
@@ -57,7 +56,7 @@ export default {
     .title {
         font-size: 84px;
     }
-    .links > a {
+    .logout {
         color: #636b6f;
         padding: 0 25px;
         font-size: 12px;
@@ -65,6 +64,7 @@ export default {
         letter-spacing: .1rem;
         text-decoration: none;
         text-transform: uppercase;
+        cursor: pointer;
     }
     .m-b-md {
         margin-bottom: 30px;
@@ -77,7 +77,7 @@ export default {
         letter-spacing: .1rem;
         text-decoration: none;
         text-transform: uppercase;
-        cursor: pointer;
+
     }
 </style>
 

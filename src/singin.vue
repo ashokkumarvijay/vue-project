@@ -1,5 +1,11 @@
 <template>
     <div>
+
+
+                <div v-if="auth" class="top-right links">
+                    <router-link to="/dashboard">Dashboard</router-link>
+                </div><br><br>
+
         <div class="container title m-b-md">
                 <label for="email"><b>Email</b></label><br>
                 <input type="text" placeholder="Enter Username" name="email" v-model="email" required><br>
@@ -12,10 +18,7 @@
                     <input type="checkbox" checked="checked" name="remember"> Remember me
                 </label>
             </div>
-            <div class="container1" style="background-color:#f1f1f1">
-                <button type="button" class="cancelbtn">Cancel</button>
-                <span class="psw">Forgot <a href="#">password?</a></span>
-            </div>
+
 
     </div>
 </template>
@@ -30,7 +33,14 @@ export default {
   methods: {
     login: function () {
       this.$store.dispatch('login', {email: this.email, password: this.password, router: this.$route})
+        this.email = ''
+        this.password = ''
     }
+  },
+  computed: {
+      auth () {
+         return this.$store.getters.isAuthenticated
+      }
   }
 }
 </script>
@@ -112,4 +122,57 @@ export default {
         margin-bottom: 30px;
         text-align: center;
     }
+     html, body {
+         background-color: #fff;
+         color: #636b6f;
+         font-family: 'Raleway', sans-serif;
+         font-weight: 100;
+         height: 100vh;
+         margin: 0;
+     }
+    .full-height {
+        height: 100vh;
+    }
+    .flex-center {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+    }
+    .position-ref {
+        position: relative;
+    }
+    .top-right {
+        position: absolute;
+        right: 10px;
+        top: 18px;
+    }
+    .content {
+        text-align: center;
+    }
+    .title1 {
+        font-size: 84px;
+    }
+    .links > a {
+        color: #636b6f;
+        padding: 0 25px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .1rem;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+    .m-b-md1 {
+        margin-bottom: 30px;
+    }
+    .header{
+        color: #636b6f;
+        padding: 0 25px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .1rem;
+        text-decoration: none;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
 </style>

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import router from './routes.js'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -17,15 +16,17 @@ export default new Vuex.Store({
     },
     storeUser (state, user) {
       state.user = user
+    },
+    logout (state) {
+      state.idToken = null
+      state.userId = null
     }
   },
   actions: {
-    setLogoutTimer ({commit, expiretime}) {
+    setLogoutTimer ({commit}, expiretime) {
       setTimeout(() => {
         commit('logout')
-
       }, expiretime * 1000)
-
     },
     signup ({commit, dispatch}, authData) {
       axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDPFy5TNZYkiIMGJQBpabdAVUS5-Gbn0-s', {
@@ -40,6 +41,12 @@ export default new Vuex.Store({
             userId: res.data.localId
           })
           dispatch('storeUser', authData)
+          dispatch('setLogoutTimer', res.data.expiresIn)
+          const now = new Date()
+          const expirationDate = new Date (now.getMilliseconds()+ res.data.expiresIn * 1000)
+            localStorage.setItem('token', res.data.idToken)
+            localStorage.setItem('userId', res.data.localId)
+          localStorage.setItem('expirationDate', expirationDate)
         })
     },
     login ({commit, dispatch,state}, authData) {
@@ -54,10 +61,36 @@ export default new Vuex.Store({
             token: res.data.idToken,
             userId: res.data.localId
           })
-          if (state.idToken !== null) {
-            console.log(authData.router.path)
-          }
+          dispatch('setLogoutTimer', res.data.expiresIn)
+          const now = new Date()
+          const expirationDate = new Date (now.getMilliseconds()+ res.data.expiresIn * 1000)
+          localStorage.setItem('token', res.data.idToken)
+          localStorage.setItem('userId', res.data.localId)
+          localStorage.setItem('expirationDate', expirationDate)
         })
+    },
+    tryAuthLogin({commit}) {
+      const token = localStorage.getItem('token')
+      if(!token) {
+        return
+      }
+      const expirationDate = localStorage.getItem('expirationDate')
+       const  now = new Date()
+      const userId = localStorage.getItem('userId')
+      if(now >= expirationDate){
+        return
+      }
+      commit('authUser', {
+        token: token,
+        userId: userId
+      })
+    },
+    logout ({commit}) {
+      commit('logout')
+      localStorage.removeItem('token')
+       localStorage.removeItem('userId')
+        localStorage.removeItem('expirationDate')
+
     },
     storeUser ({commit, state}, userData) {
       if (!state.idToken) {
@@ -86,6 +119,9 @@ export default new Vuex.Store({
   getters: {
     user (state) {
       return state.user
-    }
+    },
+      isAuthenticated (state) {
+        return state.idToken !== null
+      }
   }
 })

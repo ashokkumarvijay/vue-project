@@ -7,11 +7,13 @@
 
             <label for="email" :class="{invalid: $v.email.$error}"><b>Email</b></label>
             <input type="text" placeholder="Enter Email"  @blur="$v.email.$touch()" v-model="email"  name="email" :class="{invalid: $v.email.$error}" required>
+                <p class="invalid" v-if="!$v.email.unique"  @blur="$v.email.$touch()">The Email Already Exists</p>
             <label for="psw" :class="{invalid: $v.password.$error}"><b>Password</b></label>
             <input type="password" placeholder="Enter Password" v-model="password" @blur="$v.password.$touch()" name="psw" :class="{invalid: $v.password.$error}" required>
-
+                 <p class="invalid" v-if="!$v.password.minlen && $v.password.$invalid ">The Password Minimum 6 Characters</p>
             <label for="psw-repeat" :class="{invalid: $v.confirmpassword.$error}"><b>Repeat Password</b></label>
             <input type="password" placeholder="Repeat Password"   @blur="$v.confirmpassword.$touch()" v-model="confirmpassword" name="psw-repeat"  :class="{invalid: $v.confirmpassword.$error}"   required>
+            <p class="invalid" v-if="!$v.confirmpassword.sameAs">The Password Do Not Match</p>
             <hr>
             <button   :disabled="$v.$invalid" @click="submit" class="registerbtn" >Register</button>
         </div>
@@ -56,6 +58,9 @@ export default {
   methods: {
     submit: function () {
       this.$store.dispatch('signup', {email: this.email, password: this.password})
+        this.email = ''
+        this.password = ''
+        this.confirmpassword = ''
     }
   }
 }
