@@ -16,7 +16,7 @@ export default [
     component: dashboard,
     name: 'dashboard',
     beforeEnter (to, from, next) {
-      if (store.state.idToken) {
+      if (store.state.idToken || localStorage.getItem('token')) {
         next()
       } else {
         next('/signin')

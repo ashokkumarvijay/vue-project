@@ -11,7 +11,7 @@ export default {
     'welcome': welcome
   },
   created () {
-      this.$store.dispatch('tryAuthLogin')
+    this.$store.dispatch('tryAuthLogin')
   }
 }
 </script>

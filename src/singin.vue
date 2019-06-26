@@ -1,46 +1,72 @@
 <template>
     <div>
-
-
-                <div v-if="auth" class="top-right links">
-                    <router-link to="/dashboard">Dashboard</router-link>
-                </div><br><br>
-
+        <div v-if="auth" class="top-right links">
+            <router-link to="/dashboard">Dashboard</router-link>
+        </div><br><br>
+        <p v-if="!$v.email.unique && $v.email.required && $v.password.required" style="text-align:center" class="invalid">The Email and Password Does Not Match</p>
         <div class="container title m-b-md">
-                <label for="email"><b>Email</b></label><br>
-                <input type="text" placeholder="Enter Username" name="email" v-model="email" required><br>
-
-                <label for="psw"><b>Password</b></label><br>
-                <input type="password" placeholder="Enter Password" name="psw" v-model="password" required>
-
-                <button  @click="login" type="submit">Login</button><br>
-                <label>
-                    <input type="checkbox" checked="checked" name="remember"> Remember me
-                </label>
-            </div>
-
+            <label for="email"><b>Email</b></label><br>
+            <input type="text" placeholder="Enter Username" name="email" v-model.lazy="email" @blur="$v.email.$touch()" required><br>
+            <p class="invalid" v-if="$v.email.required && !$v.email.email">The Email Is Invalid</p>
+            <label for="psw"><b>Password</b></label><br>
+            <input type="password" placeholder="Enter Password" name="psw" v-model.lazy="password" @blur="$v.password.$touch()" required>
+            <h1 v-for="val in value"> {{val.email}}</h1>
+            <button  @click="login"  :disabled="$v.$invalid" type="submit">Login</button><br>
+            <label>
+                <input type="checkbox" checked="checked" name="remember"> Remember me
+            </label>
+        </div>
 
     </div>
 </template>
 <script>
+import {required, email} from 'vuelidate/lib/validators'
+import axios from 'axios'
 export default {
+    validations: {
+        email: {
+            required,
+            email,
+            unique: val => {
+                if (val === ' ') return false
+                return axios.get('https://ashok-38e5f.firebaseio.com/data.json?orderBy="email"&equalTo="' + val + '"')
+                    .then(res => {
+                        const data = res.data
+                        const users = []
+                        for (let key in data) {
+                            const user = data[key]
+                            user.id = key
+                            users.push(user)
+                            this.value = users
+                        }
+                        return Object.keys(res.data).length === 1
+
+                    })
+            }
+        },
+        password: {
+            required
+        }
+    },
   data: function () {
     return {
       email: '',
-      password: ''
+      password: '',
+      value: []
+
     }
   },
   methods: {
     login: function () {
       this.$store.dispatch('login', {email: this.email, password: this.password, router: this.$route})
-        this.email = ''
-        this.password = ''
+      this.email = ''
+      this.password = ''
     }
   },
   computed: {
-      auth () {
-         return this.$store.getters.isAuthenticated
-      }
+    auth () {
+      return this.$store.getters.isAuthenticated
+    }
   }
 }
 </script>
@@ -173,6 +199,9 @@ export default {
         text-decoration: none;
         text-transform: uppercase;
         cursor: pointer;
+    }
+    .invalid {
+        color:red;
     }
 
 </style>

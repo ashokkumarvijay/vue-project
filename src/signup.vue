@@ -4,20 +4,19 @@
             <h1>Register</h1>
             <p>Please fill in this form to create an account.</p>
             <hr>
-
-            <label for="email" :class="{invalid: $v.email.$error}"><b>Email</b></label>
-            <input type="text" placeholder="Enter Email"  @blur="$v.email.$touch()" v-model="email"  name="email" :class="{invalid: $v.email.$error}" required>
-                <p class="invalid" v-if="!$v.email.unique"  @blur="$v.email.$touch()">The Email Already Exists</p>
-            <label for="psw" :class="{invalid: $v.password.$error}"><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" v-model="password" @blur="$v.password.$touch()" name="psw" :class="{invalid: $v.password.$error}" required>
+            <label for="email"><b>Email</b></label>
+            <input type="text" placeholder="Enter Email"  @blur="$v.email.$touch()" v-model.lazy="email"  name="email" required>
+                <p class="invalid" v-if="!$v.email.unique && $v.email.required && $v.email.email">The Email Already Exists</p>
+                <p class="invalid" v-if="$v.email.required && !$v.email.email">The Email Is Invalid</p>
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" v-model.lazy="password" @blur="$v.password.$touch()" name="psw"  required>
                  <p class="invalid" v-if="!$v.password.minlen && $v.password.$invalid ">The Password Minimum 6 Characters</p>
-            <label for="psw-repeat" :class="{invalid: $v.confirmpassword.$error}"><b>Repeat Password</b></label>
-            <input type="password" placeholder="Repeat Password"   @blur="$v.confirmpassword.$touch()" v-model="confirmpassword" name="psw-repeat"  :class="{invalid: $v.confirmpassword.$error}"   required>
-            <p class="invalid" v-if="!$v.confirmpassword.sameAs">The Password Do Not Match</p>
+            <label for="psw-repeat"><b>Repeat Password</b></label>
+            <input type="password" placeholder="Repeat Password"   @blur="$v.confirmpassword.$touch()" v-model.lazy="confirmpassword" name="psw-repeat"   required>
+            <p class="invalid" v-if="!$v.confirmpassword.sameAs && $v.confirmpassword.required">The Password Do Not Match</p>
             <hr>
             <button   :disabled="$v.$invalid" @click="submit" class="registerbtn" >Register</button>
         </div>
-
         <div class="container signin">
             <p>Already have an account? <router-link to="/signin">Sign_In</router-link>.</p>
         </div>
@@ -43,7 +42,9 @@ export default {
         if (val === ' ') return true
         return axios.get('https://ashok-38e5f.firebaseio.com/data.json?orderBy="email"&equalTo="' + val + '"')
           .then(res => {
+              console.log(res.data)
             return Object.keys(res.data).length === 0
+
           })
       }
     },
@@ -52,6 +53,7 @@ export default {
       minlen: minLength(6)
     },
     confirmpassword: {
+        required,
       sameAs: sameAs('password')
     }
   },
@@ -93,12 +95,7 @@ export default {
         border: 1px solid #f1f1f1;
         margin-bottom: 25px;
     }
-.invalid {
-    color:red;
-}
- .invalid input{
-    background-color: red;
-}
+
     /* Set a style for the submit/register button */
     .registerbtn {
         background-color: #4CAF50;
