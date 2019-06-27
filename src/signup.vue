@@ -6,9 +6,9 @@
             <hr>
             <label for="email"><b>Email</b></label>
             <input type="text" placeholder="Enter Email"  @blur="$v.email.$touch()" v-model.lazy="email"  name="email" required>
-                <p class="invalid" v-if="!$v.email.unique && $v.email.required && $v.email.email">The Email Already Exists</p>
+                <p class="invalid" v-if="$v.email.unique && $v.email.required && $v.email.email">The Email Already Exists</p>
                 <p class="invalid" v-if="$v.email.required && !$v.email.email">The Email Is Invalid</p>
-            <label for="psw"><b>Password</b></label>
+             <label for="psw"><b>Password</b></label>
             <input type="password" placeholder="Enter Password" v-model.lazy="password" @blur="$v.password.$touch()" name="psw"  required>
                  <p class="invalid" v-if="!$v.password.minlen && $v.password.$invalid ">The Password Minimum 6 Characters</p>
             <label for="psw-repeat"><b>Repeat Password</b></label>
@@ -39,11 +39,16 @@ export default {
       required,
       email,
       unique: val => {
-        if (val === ' ') return true
+        if (val === ' ') return false
         return axios.get('https://ashok-38e5f.firebaseio.com/data.json?orderBy="email"&equalTo="' + val + '"')
           .then(res => {
               console.log(res.data)
-            return Object.keys(res.data).length === 0
+            if(Object.keys(res.data).length === 1) {
+                return true
+            }
+        else {
+            return false
+            }
 
           })
       }
@@ -115,5 +120,8 @@ export default {
     .signin {
         background-color: #f1f1f1;
         text-align: center;
+    }
+    .invalid {
+        color: red;
     }
 </style>

@@ -3,15 +3,14 @@
         <div v-if="auth" class="top-right links">
             <router-link to="/dashboard">Dashboard</router-link>
         </div><br><br>
-        <p v-if="!$v.email.unique && $v.email.required && $v.password.required" style="text-align:center" class="invalid">The Email and Password Does Not Match</p>
+        <p v-if ="!ans" class="invalid" style="text-align: center"> The Email And Password Doe Not Match</p>
         <div class="container title m-b-md">
             <label for="email"><b>Email</b></label><br>
             <input type="text" placeholder="Enter Username" name="email" v-model.lazy="email" @blur="$v.email.$touch()" required><br>
             <p class="invalid" v-if="$v.email.required && !$v.email.email">The Email Is Invalid</p>
             <label for="psw"><b>Password</b></label><br>
             <input type="password" placeholder="Enter Password" name="psw" v-model.lazy="password" @blur="$v.password.$touch()" required>
-            <h1 v-for="val in value"> {{val.email}}</h1>
-            <button  @click="login"  :disabled="$v.$invalid" type="submit">Login</button><br>
+            <button  @click="login(email,password)"  :disabled="$v.$invalid" type="submit">Login</button><br>
             <label>
                 <input type="checkbox" checked="checked" name="remember"> Remember me
             </label>
@@ -23,6 +22,15 @@
 import {required, email} from 'vuelidate/lib/validators'
 import axios from 'axios'
 export default {
+    data: function () {
+        return {
+            email: '',
+            password: '',
+            value: '<p>The Password Does Not match</p>',
+            ans: true
+
+        }
+    },
     validations: {
         email: {
             required,
@@ -37,8 +45,9 @@ export default {
                             const user = data[key]
                             user.id = key
                             users.push(user)
-                            this.value = users
+
                         }
+                        //this.value = Object.keys(res.data).length
                         return Object.keys(res.data).length === 1
 
                     })
@@ -48,26 +57,44 @@ export default {
             required
         }
     },
-  data: function () {
-    return {
-      email: '',
-      password: '',
-      value: []
+        methods: {
+            login: function (email,password) {
+                axios.get('https://ashok-38e5f.firebaseio.com/data.json?orderBy="email"&equalTo="' + email + '"')
+                    .then(res => {
+                        const data = res.data
+                        const users = []
+                        const user = ''
+                        for (let key in data) {
+                            const user = data[key]
+                            if(user.password == password){
+                                this.$store.dispatch('login', {email: this.email, password: this.password, router: this.$route})
+                                this.email = ''
+                                this.password = ''
+                                this.ans = true
+                                console.log(user.email)
+                                return this.ans
 
-    }
-  },
-  methods: {
-    login: function () {
-      this.$store.dispatch('login', {email: this.email, password: this.password, router: this.$route})
-      this.email = ''
-      this.password = ''
-    }
-  },
-  computed: {
-    auth () {
-      return this.$store.getters.isAuthenticated
-    }
-  }
+                            }
+                            else {
+                                console.log(user.email)
+                             this.ans = false
+                                return this.ans
+
+                            }
+                        }
+
+
+                    })
+
+
+            }
+        },
+        computed: {
+            auth() {
+                return this.$store.getters.isAuthenticated
+            }
+        }
+
 }
 </script>
 <style scoped>
